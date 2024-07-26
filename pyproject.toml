@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "cprnn"
+version = "0.1.0"
+description = ""
+authors = [
+    "Michael Atkinson <michael.atkinson@ukaea.uk>",
+    "Mike White <mike.white@ukaea.uk>",
+    "Pratheek Shanthraj <pratheek.shanthraj@ukaea.uk>",
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.13"
+numpy = "<2"
+matflow-new = "^0.3.0a129"
+torch = "^2.4.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
