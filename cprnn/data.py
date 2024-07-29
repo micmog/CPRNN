@@ -1,6 +1,7 @@
 import pickle
 from pathlib import Path
 from abc import ABC, abstractmethod
+from typing import Union
 
 import numpy as np
 from torch.utils.data import Dataset
@@ -144,14 +145,27 @@ def load_dataset(filename: str) -> tuple[StressDataset, StateDataset]:
 
 
 def load_dataset_matflow(
-    filename: str, use_cache: bool = True, **kwargs
+    filename: Union[str, Path], state_name: str, use_cache: bool = True, **kwargs
 ) -> tuple[StressDataset, StateDataset]:
-    filepath_cache = cache_path(filename)
+    """_summary_
+
+    Args:
+        filename (str):
+            Workflow to load data from.
+        state_name (str: {'voronoi', 'fingerprint'}):
+            Type of state data to load.
+        use_cache (bool, optional): 
+            Use cached data file. Defaults to True.
+
+    Returns:
+        tuple[StressDataset, StateDataset]
+    """
+    filepath_cache = cache_path(filename, state_name)
     if use_cache and filepath_cache.exists():
         print("Loading cached file")
         data = load_data_cache(filepath_cache)
     else:
-        data = load_data_matflow(filename)
+        data = load_data_matflow(filename, state_name)
         if use_cache:
             print("Saving cached file")
             save_data_cache(filepath_cache, data)
@@ -159,8 +173,9 @@ def load_dataset_matflow(
     return StressDataset(data[0], **kwargs), StateDataset(data[1])
 
 
-def cache_path(filename: str):
-    return Path(filename).with_suffix(".npz")
+def cache_path(filename: Union[str, Path], state_name: str):
+    p = Path(filename)
+    return p.with_stem(f'{p.stem}_{state_name}').with_suffix(".npz")
 
 
 def load_data_cache(filepath: Path) -> tuple[np.ndarray]:
@@ -168,11 +183,11 @@ def load_data_cache(filepath: Path) -> tuple[np.ndarray]:
     return data["data"], data["state"]
 
 
-def save_data_cache(filepath: Path, data: tuple[np.ndarray]) -> None:
+def save_data_cache(filepath: Path, data: tuple[np.ndarray], state_name: str) -> None:
     np.savez_compressed(filepath, data=data[0], state=data[1])
 
 
-def load_data_matflow(filename: str, state_name: str) -> tuple[np.ndarray]:
+def load_data_matflow(filename: Union[str, Path], state_name: str) -> tuple[np.ndarray]:
     wk = mf.Workflow(filename)
 
     sim_elmts = wk.tasks.simulate_VE_loading_damask_HC.elements
