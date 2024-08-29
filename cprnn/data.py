@@ -11,6 +11,8 @@ import matflow as mf
 from cprnn.utils import qu2eu
 
 
+__all__ = ["StressDataset", "StateDataset", "load_dataset", "load_dataset_matflow"]
+
 class StressDataset(Dataset):
     in_size = 10
     out_size = 7
@@ -121,7 +123,7 @@ def load_dataset(filename: str) -> tuple[StressDataset, StateDataset]:
         (n_batch, n_steps, StressDataset.in_size + StressDataset.out_size),
         dtype=np.float32,
     )
-    state = np.zeros((n_batch, StateDataset.state_size), dtype=np.float32)
+    state = np.zeros((n_batch, 120), dtype=np.float32)
 
     for i, dataset in enumerate(datasets.values()):
         state[i] = (
