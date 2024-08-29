@@ -1,0 +1,6 @@
+Applications:
+    moose_app:
+        app_types:
+            - MooseAppApp
+        content_directory: ${ROOT_DIR}/doc/content
+        log_default: WARNING
